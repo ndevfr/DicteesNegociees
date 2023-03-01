@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Dictees Negociees Webapp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This application allows you to generate video-projetable negotiated dictations from the students'copies (based on the number of words).
 
 ## Available Scripts
 
