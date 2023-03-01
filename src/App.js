@@ -23,21 +23,42 @@ const saveToLocalStorage = (name, value) => {
   localStorage.setItem(LOCALSTORAGE_PREFIX + name, JSON.stringify(value));
 };
 
-const loadFromLocalStorage = (name, defaultValue) => {
+const loadFromLocalStorage = (name, type, defaultValue, min = 0, max = 40) => {
   if (localStorage.getItem(LOCALSTORAGE_PREFIX + name)) {
-    return JSON.parse(localStorage.getItem(LOCALSTORAGE_PREFIX + name));
+    try {
+      const data = JSON.parse(localStorage.getItem(LOCALSTORAGE_PREFIX + name));
+
+      switch (type) {
+        case "boolean":
+          return typeof data === "boolean" ? data : defaultValue;
+        case "integer":
+          return Number.isInteger(data)
+            ? data >= min && data <= max
+              ? data
+              : defaultValue
+            : defaultValue;
+        case "array":
+          return Array.isArray(data) ? data : defaultValue;
+        default:
+          return defaultValue;
+      }
+    } catch {
+      return defaultValue;
+    }
   } else {
     return defaultValue;
   }
 };
 
 const DisplayProvider = ({ children }) => {
-  const [zoom, setZoom] = useState(() => loadFromLocalStorage("zoom", false));
+  const [zoom, setZoom] = useState(() =>
+    loadFromLocalStorage("zoom", "boolean", false)
+  );
   const [separe, setSepare] = useState(() =>
-    loadFromLocalStorage("separe", false)
+    loadFromLocalStorage("separe", "boolean", false)
   );
   const [fontSize, setFontSize] = useState(() =>
-    loadFromLocalStorage("fontSize", 16)
+    loadFromLocalStorage("fontSize", "integer", 16)
   );
 
   useEffect(() => {
@@ -91,7 +112,7 @@ const DisplayProvider = ({ children }) => {
 
 const CopiesProvider = ({ children }) => {
   const [copies, setCopies] = useState(() =>
-    loadFromLocalStorage("copies", [""])
+    loadFromLocalStorage("copies", "array", [""])
   );
   const [exemple, setExemple] = useState("");
 
